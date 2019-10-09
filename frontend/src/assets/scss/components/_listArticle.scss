@@ -1,0 +1,41 @@
+@import "../variables";
+
+.meli-listArticle {
+  display: flex;
+  color: $black-900;
+  width: 100%;
+  border-bottom: 1px solid $grey;
+  &:last-child{
+    border-bottom: 0;
+  }
+  &-thumbnail {
+    margin: 16px;
+    &__img{
+      width: 180px;
+      height: 180px;
+      border-radius: $border-radius;
+    }
+  }
+  &-information{
+    flex: 0.9;
+    &__price{
+      font-size: 24px;
+      font-weight: 500;
+    }
+    &__freeShipping{
+      display: inline-block;
+      @include image-retina("/images/ic_shipping", "png", 18px, 18px, no-repeat, cover);
+      margin-left: 20px;
+    }
+    &__title{
+      font-size: 18px;
+      font-weight: 500;
+      margin-top: 32px;
+    }
+  }
+  &__location{
+    font-size: 12px;
+    margin-top: 10px;
+    color: $black-300;
+  }
+}

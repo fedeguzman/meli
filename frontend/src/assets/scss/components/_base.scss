@@ -1,0 +1,10 @@
+@import "../variables";
+
+body{
+  margin: 0;
+  font-family: Proxima Nova, "Arial", -apple-system, Helvetica Neue,Helvetica,Roboto,sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: $grey;
+}
+

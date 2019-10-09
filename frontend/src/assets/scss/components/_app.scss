@@ -1,0 +1,49 @@
+@import "../variables";
+
+.app {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  &-container {
+    display: flex;
+    flex-direction: column;
+    width: 940px;
+    max-width: 940px;
+    margin-bottom: 25px;
+  }
+}
+
+.hero {
+  display: flex;
+  width: 100vw;
+  justify-content: center;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+button {
+  &.button {
+    display: block;
+    color: $white;
+    text-align: center;
+    margin-top: 32px;
+    margin-right: 32px;
+    width: 100%;
+    border-radius: $border-radius;
+    padding: 10px;
+    border: 0;
+    font-size: 16px;
+    &-primary {
+      background: $accent-color;
+    }
+  }
+}

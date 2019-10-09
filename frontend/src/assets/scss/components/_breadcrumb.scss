@@ -1,0 +1,36 @@
+.breadcrumb {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+  &-item{
+    display: list-item;
+    font-size: 14px;
+    color: $black-300;
+    &:first-child{
+      &:before{
+        content: "";
+        background: none;
+        width: 0px;
+        height: 0px;
+        margin: 0;
+        background-size: contain;
+      }
+    }
+
+    &:before{
+      display: inline-block;
+      content: "";
+      background: url("/images/right-chevron.svg");
+      width: 10px;
+      height: 10px;
+      margin: 0px 10px;
+
+      background-size: contain;
+    }
+    
+    &:last-child{
+      font-weight: bold;
+    }
+  }
+}
