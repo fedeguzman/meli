@@ -9,7 +9,7 @@ const apiRouter = require("./routes/api");
 
 const app = express();
 
-const whitelist = [process.env.FRONTEND];
+const whitelist = [process.env.FRONTEND, "http://localhost:5000"];
 
 const corsOptions = {
   origin: function(origin, callback) {

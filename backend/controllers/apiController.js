@@ -1,5 +1,6 @@
 const axios = require("axios");
 const endpoints = require("../helpers/endpoints").default;
+const helpers = require("../helpers/helpers");
 
 exports.getItems = (req, res) => {
   const { query } = req.query;
@@ -48,7 +49,9 @@ exports.getItems = (req, res) => {
             amount: ~~item.price,
             decimals: ~~((item.price % 1) * 100)
           },
-          picture: item.thumbnail.replace(/-I\./, "-X."), // -F[1] for HD  - V for thumb
+          picture: item.thumbnail
+            .replace(/-I\./, "-X.")
+            .replace(/^http:\/\//i, "https://"), // -F[1] for HD  - V for thumb
           condition: item.condition,
           free_shipping: item.shipping.free_shipping,
           seller_address: {
@@ -68,5 +71,38 @@ exports.getItems = (req, res) => {
     })
     .catch(error => {
       res.status(500).json({ error: error.message });
+    });
+};
+
+exports.getDetailItem = (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(500).json({ error: "No product found" });
+  }
+
+  const itemResponse = helpers.getItemResponse(id);
+  const descriptionItemResponse = helpers.getItemDescriptionResponse(id);
+
+  Promise.all([itemResponse, descriptionItemResponse])
+    .then(async item => {
+      const author = helpers.getAuthor();
+      const itemInfo = item[0];
+      const itemDescription = item[1];
+
+      const itemResponse = helpers.buildItem(itemInfo, itemDescription);
+
+      itemResponse.categories = await helpers.getCategoriesFromAPI(
+        itemInfo.category_id
+      );
+
+      res.status(200).json({
+        author,
+        item: itemResponse
+      });
+    })
+    .catch(error => {
+      res.status(500).json({
+        error: error.message
+      });
     });
 };

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import getGetParameters from "../utils/getGetParameters";
 import history from "../utils/history";
+import { saveToCache } from "../utils/saveCache";
 
 export default class InputSearch extends Component {
   state = {
@@ -36,6 +37,7 @@ export default class InputSearch extends Component {
       history.push("/");
       return false;
     }
+    saveToCache("last_searches", this.state.query);
     history.push(`/items?query=${this.state.query}`);
   };
 

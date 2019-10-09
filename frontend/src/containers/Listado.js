@@ -5,6 +5,7 @@ import history from "../utils/history";
 import Spinner from "../components/Spinner";
 import ListArticle from "../components/ListArticle";
 import Breadcrumb from "../components/Breadcrumb";
+import { saveToCache, getCache, isInCache } from "../utils/saveCache";
 
 export default class Listado extends Component {
   state = {
@@ -17,7 +18,17 @@ export default class Listado extends Component {
     const query = getGetParameters("query");
 
     if (query) {
-      this.setQuery(query);
+      isInCache(query, "last_results", "query").then(inCache => {
+        if (!inCache) {
+          this.setQuery(query);
+        } else {
+          this.setState({
+            loading: false,
+            data: inCache,
+            query: inCache.query
+          });
+        }
+      });
     }
 
     this.unlisten = history.listen((location, action) => {
@@ -55,6 +66,9 @@ export default class Listado extends Component {
           loading: false,
           data
         });
+
+        data.query = query;
+        saveToCache("last_results", data);
       });
   };
 
@@ -71,7 +85,7 @@ export default class Listado extends Component {
           categories={!this.state.loading ? this.state.data.categories : []}
         />
         <section className="card">
-          {this.state.loading && <Spinner />}
+          {this.state.loading && this.state.query !== "" && <Spinner />}
           {!this.state.loading &&
             this.state.data &&
             this.state.data.items.map(item => {
