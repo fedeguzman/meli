@@ -1,28 +1,41 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 import getGetParameters from "../utils/getGetParameters";
-import history from "../utils/history";
 import { saveToCache } from "../utils/saveCache";
 
-export default class InputSearch extends Component {
+class InputSearch extends Component {
   state = {
     query: ""
   };
 
   componentDidMount() {
-    const query = getGetParameters("query");
+    const query = getGetParameters("search");
+    console.log("hola");
     if (document.location.pathname === "/items" && query) {
       this.setState({
         query
       });
     }
+  }
 
-    this.unlisten = history.listen((location, action) => {
-      if (document.location.pathname === "/" && this.state.query !== "") {
-        this.setState({
-          query: ""
-        });
-      }
-    });
+  componentDidUpdate(prevProps, prevState) {
+    const prevRoute = prevProps.location.pathname;
+    const currentRoute = this.props.location.pathname;
+    const query = this.state.query;
+    console.log(this.props.location);
+
+    if (prevRoute !== currentRoute && currentRoute === "/" && query !== "") {
+      this.setState({
+        query: ""
+      });
+    }
+    if (prevRoute !== currentRoute && currentRoute === "/items") {
+      console.log("test");
+      const query = getGetParameters("search");
+      this.setState({
+        query
+      });
+    }
   }
 
   handleQuery = e => {
@@ -33,12 +46,13 @@ export default class InputSearch extends Component {
 
   search = e => {
     e.preventDefault();
-    if (this.state.query === "") {
-      history.push("/");
+    const query = this.state.query.trim();
+    if (query === "") {
+      this.props.history.push("/");
       return false;
     }
-    saveToCache("last_searches", this.state.query);
-    history.push(`/items?query=${this.state.query}`);
+    saveToCache("last_searches", query);
+    this.props.history.push(`/items?search=${query}`);
   };
 
   render() {
@@ -54,6 +68,7 @@ export default class InputSearch extends Component {
           placeholder="Nunca dejes de buscar"
           value={this.state.query}
           onChange={this.handleQuery}
+          onClick={this.props.openRecentSearches}
           className="meli-search-query"
           autoComplete="off"
         ></input>
@@ -68,3 +83,5 @@ export default class InputSearch extends Component {
     );
   }
 }
+
+export default withRouter(InputSearch);

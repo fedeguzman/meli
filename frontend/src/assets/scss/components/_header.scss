@@ -11,10 +11,10 @@ header {
     .container-header {
       display: flex;
       align-items: center;
-      width: 960px;
-      max-width: 960px;
+      width: $max-width;
+      max-width: $max-width;
       height: 40px;
-      @media screen and (max-width: 960px) {
+      @media screen and (max-width: $max-width) {
         width: 100%;
         padding: 0px 10px;
       }
@@ -33,6 +33,9 @@ header {
             background-image: url("/images/Logo_ML@2x.png");
           }
         }
+      }
+      .meli-searchbox{
+        flex: 1;
       }
     }
   }

@@ -36,6 +36,8 @@ export const isInCache = (query, where, searchBy) => {
         case "id":
           findInCache = cache.filter(c => c.data.item.id === query);
           break;
+        default:
+          resolve(false);
       }
 
       if (findInCache.length > 0) {

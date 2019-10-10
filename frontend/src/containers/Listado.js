@@ -1,22 +1,24 @@
 import React, { Component } from "react";
+import { Helmet } from "react-helmet";
+import { withRouter } from "react-router-dom";
 import axios from "axios";
 import getGetParameters from "../utils/getGetParameters";
-import history from "../utils/history";
 import Spinner from "../components/Spinner";
 import ListArticle from "../components/ListArticle";
 import Breadcrumb from "../components/Breadcrumb";
 import { saveToCache, isInCache } from "../utils/saveCache";
-import { API } from "../utils/const";
+import { API, APP_TITLE } from "../utils/const";
 
-export default class Listado extends Component {
+class Listado extends Component {
   state = {
     loading: true,
     query: "",
-    data: null
+    data: null,
+    error: false
   };
 
   componentDidMount() {
-    const query = getGetParameters("query");
+    const query = getGetParameters("search");
 
     if (query) {
       isInCache(query, "last_results", "query").then(inCache => {
@@ -31,13 +33,15 @@ export default class Listado extends Component {
         }
       });
     }
+  }
 
-    this.unlisten = history.listen((location, action) => {
-      if (document.location.pathname === "/items") {
-        const query = getGetParameters("query");
-        this.setQuery(query);
-      }
-    });
+  componentDidUpdate(prevProps) {
+    const prevRoute = prevProps.location.search;
+    const currentRoute = this.props.location.search;
+    if (prevRoute !== currentRoute) {
+      const query = getGetParameters("search");
+      this.setQuery(query);
+    }
   }
 
   setQuery = query => {
@@ -70,18 +74,32 @@ export default class Listado extends Component {
 
         data.query = query;
         saveToCache("last_results", data);
+      })
+      .catch(e => {
+        const response = e.response && e.response.data;
+        if (response) {
+          const error = e.response.data.error;
+          if (error.includes("404")) {
+            this.setState({
+              loading: false,
+              error: true
+            });
+          }
+        } else {
+          this.setState({
+            loading: false,
+            error: true
+          });
+        }
       });
   };
-
-  componentWillUnmount() {
-    if (this.unlisten) {
-      this.unlisten();
-    }
-  }
 
   render() {
     return (
       <div className="app-container">
+        <Helmet>
+          <title>Resultados de la busqueda - {APP_TITLE}</title>
+        </Helmet>
         <Breadcrumb
           categories={
             !this.state.loading && this.state.data
@@ -114,8 +132,16 @@ export default class Listado extends Component {
               </ul>
             </div>
           )}
+          {this.state.error && (
+            <div>
+              <h1>Ups... Algo sucedío</h1>
+              <p>¿Querés intentar de nuevo?</p>
+            </div>
+          )}
         </section>
       </div>
     );
   }
 }
+
+export default withRouter(Listado);
