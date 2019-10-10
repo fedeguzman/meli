@@ -1,5 +1,5 @@
 @mixin image-retina($filename, $extension, $width, $height, $repeat, $size) {
-  background: url($filename+"."+$extension);
+  background-image: url($filename+"."+$extension);
   width: $width;
   height: $height;
   background-repeat: $repeat;
@@ -7,7 +7,7 @@
 
   @media (-webkit-min-device-pixel-ratio: 2), (-moz-min-device-pixel-ratio: 2) {
     & {
-      background: url($filename+"@2x."+$extension);
+      background-image: url($filename+"@2x."+$extension);
     }
   }
 }

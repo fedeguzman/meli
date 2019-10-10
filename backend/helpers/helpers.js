@@ -1,20 +1,6 @@
 const axios = require("axios");
 const endpoints = require("../helpers/endpoints").default;
 
-exports.getItemResponse = id => {
-  if (!id) {
-    throw "Error. You must pass the product id";
-  }
-
-  const endpoint = endpoints.GET_ITEM.replace(":id", id);
-
-  return new Promise((resolve, reject) => {
-    axios.get(endpoint).then(response => {
-      resolve(response.data);
-    });
-  });
-};
-
 exports.getAuthor = () => {
   return {
     name: "Federico",
@@ -22,44 +8,118 @@ exports.getAuthor = () => {
   };
 };
 
-exports.getItemDescriptionResponse = id => {
-  if (!id) {
-    throw "Error. You must pass the product id";
-  }
+exports.getItemFromQuery = query => {
+  const endpoint = endpoints.GET_ITEMS.replace(":query", query);
 
+  return new Promise((resolve, reject) => {
+    axios
+      .get(endpoint)
+      .then(response => {
+        const data = response.data;
+        // Get categories
+
+        const filters = data.filters;
+        const categories = [];
+
+        filters.forEach(filter => {
+          if (filter.id === "category") {
+            const category = filter.values[0].path_from_root;
+            category.forEach(value => {
+              categories.push(value.name);
+            });
+          }
+        });
+
+        // Get Items
+
+        const items = data.results;
+
+        const subset_items = items.map(item => {
+          return {
+            id: item.id,
+            title: item.title,
+            price: {
+              currency: item.currency_id,
+              amount: ~~item.price,
+              decimals: ~~((item.price % 1) * 100)
+            },
+            picture: item.thumbnail
+              .replace(/-I\./, "-X.")
+              .replace(/^http:\/\//i, "https://"), // -F[1] for HD  - V for thumb
+            condition: item.condition,
+            free_shipping: item.shipping.free_shipping,
+            seller_address: {
+              state: item.seller_address.state.name
+            }
+          };
+        });
+
+        resolve({
+          categories,
+          items: subset_items
+        });
+      })
+      .catch(error => {
+        reject({ error: error.message });
+      });
+  });
+};
+
+exports.getItemResponse = id => {
+  const endpoint = endpoints.GET_ITEM.replace(":id", id);
+
+  return new Promise((resolve, reject) => {
+    axios
+      .get(endpoint)
+      .then(response => {
+        resolve(response.data);
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+};
+
+exports.getItemDescriptionResponse = id => {
   const endpoint = endpoints.GET_DESCRIPTION_ITEM.replace(":id", id);
 
   return new Promise((resolve, reject) => {
-    axios.get(endpoint).then(response => {
-      resolve(response.data);
-    });
+    axios
+      .get(endpoint)
+      .then(response => {
+        if (response.status == 200) {
+          resolve(response.data);
+        }
+      })
+      .catch(error => {
+        resolve({ error: error.message });
+      });
   });
 };
 
 exports.getCategoriesFromAPI = category => {
-  if (!category) {
-    throw "Error. You must pass the category id";
-  }
-
   const endpoint = endpoints.GET_CATEGORY_BY_ID.replace(":category", category);
 
   return new Promise((resolve, reject) => {
-    axios.get(endpoint).then(response => {
-      const data = response.data;
-      const categories = [];
-      const category = data.path_from_root;
+    axios
+      .get(endpoint)
+      .then(response => {
+        const data = response.data;
+        const categories = [];
+        const category = data.path_from_root;
 
-      category.forEach(value => {
-        categories.push(value.name);
+        category.forEach(value => {
+          categories.push(value.name);
+        });
+        resolve(categories);
+      })
+      .catch(error => {
+        reject(error);
       });
-      resolve(categories);
-    });
   });
 };
 
 exports.buildItem = (item, description) => {
-  const author = this.getAuthor();
-
   const itemResponse = {
     id: item.id,
     title: item.title,

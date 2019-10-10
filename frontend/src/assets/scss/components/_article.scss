@@ -1,19 +1,37 @@
 @import "../variables";
 
-
 .meli-article {
   display: flex;
+  @media screen and (max-width: 960px) {
+    flex-direction: column;
+  }
   color: $black-900;
   .article-detail {
     display: flex;
     flex-direction: column;
     max-width: 680px;
+    @media screen and (max-width: 960px) {
+      max-width: 100%;
+      width: 100%;
+      order: 2;
+    }
     &-thumbnail {
       display: flex;
       align-items: center;
       justify-content: center;
       width: 680px;
       height: 680px;
+      img {
+        max-width: 680px;
+        @media screen and (max-width: 960px) {
+          width: 100%;
+          height: auto;
+        }
+      }
+      @media screen and (max-width: 960px) {
+        width: 100%;
+        height: auto;
+      }
     }
     &-description {
       &__title {
@@ -49,7 +67,7 @@
         font-size: 28px;
       }
     }
-    &__freeShipping{
+    &__freeShipping {
       color: $green;
       font-size: 12px;
     }

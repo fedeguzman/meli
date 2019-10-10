@@ -14,6 +14,10 @@
       width: 180px;
       height: 180px;
       border-radius: $border-radius;
+      @media screen and (max-width: 600px) {
+        width: 100px;
+        height: 100px;
+      }
     }
   }
   &-information{
@@ -31,11 +35,17 @@
       font-size: 18px;
       font-weight: 500;
       margin-top: 32px;
+      @media screen and (max-width: 600px) {
+        font-size: 16px;
+      }
     }
   }
   &__location{
     font-size: 12px;
     margin-top: 10px;
     color: $black-600;
+    @media screen and (max-width: 600px) {
+      display: none;
+    }
   }
 }

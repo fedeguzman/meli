@@ -15,14 +15,16 @@ export default class Article extends Component {
               alt={item.title}
             />
           </div>
-          <div className="article-detail-description">
-            <h1 className="article-detail-description__title">
-              Descripción del producto
-            </h1>
-            <p className="article-detail-description__content">
-              {item.description}
-            </p>
-          </div>
+          {item.description && (
+            <div className="article-detail-description">
+              <h1 className="article-detail-description__title">
+                Descripción del producto
+              </h1>
+              <p className="article-detail-description__content">
+                {item.description}
+              </p>
+            </div>
+          )}
         </div>
         <div className="article-data">
           <p className="article-data__status">

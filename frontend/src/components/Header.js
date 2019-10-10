@@ -5,7 +5,7 @@ import InputSearch from "./InputSearch";
 const Header = () => {
   return (
     <header className="meli-header">
-      <div className="container">
+      <div className="container-header">
         <Link to="/" className="meli-logo">
           <span className="meli-logo_img"></span>
           <span className="sr-only">Mercado Libre</span>

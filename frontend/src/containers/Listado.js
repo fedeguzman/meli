@@ -5,7 +5,8 @@ import history from "../utils/history";
 import Spinner from "../components/Spinner";
 import ListArticle from "../components/ListArticle";
 import Breadcrumb from "../components/Breadcrumb";
-import { saveToCache, getCache, isInCache } from "../utils/saveCache";
+import { saveToCache, isInCache } from "../utils/saveCache";
+import { API } from "../utils/const";
 
 export default class Listado extends Component {
   state = {
@@ -55,7 +56,7 @@ export default class Listado extends Component {
       loading: true
     });
     axios
-      .get("http://localhost:3001/api/items", {
+      .get(`${API}/api/items`, {
         params: {
           query
         }
@@ -82,7 +83,11 @@ export default class Listado extends Component {
     return (
       <div className="app-container">
         <Breadcrumb
-          categories={!this.state.loading ? this.state.data.categories : []}
+          categories={
+            !this.state.loading && this.state.data
+              ? this.state.data.categories
+              : []
+          }
         />
         <section className="card">
           {this.state.loading && this.state.query !== "" && <Spinner />}
@@ -98,6 +103,15 @@ export default class Listado extends Component {
                 Escribí tu búsqueda en el campo que figura en la parte superior
                 de la pantalla.
               </p>
+            </div>
+          )}
+          {this.state.data && this.state.data.items.length === 0 && (
+            <div>
+              <h1>No hay publicaciones que coincidan con tu búsqueda.</h1>
+              <ul>
+                <li>Revisá la ortografía de la palabra.</li>
+                <li>Utilizá palabras más genéricas o menos palabras.</li>
+              </ul>
             </div>
           )}
         </section>
